@@ -72,7 +72,7 @@ void ctkEATopicWildcardTestSuite::init()
 
   if (useSignalSlot)
   {
-    eventAdmin->publishSignal(this, SIGNAL(syncSignal(ctkEvent)), Qt::DirectConnection);
+    //eventAdmin->publishSignal(this, SIGNAL(syncSignal(ctkEvent)), Qt::DirectConnection);
   }
 }
 
@@ -91,9 +91,9 @@ void ctkEATopicWildcardTestSuite::testEventDeliveryForWildcardTopic1()
 
   if (useSignalSlot)
   {
-    qlonglong id = eventAdmin->subscribeSlot(&handler, SLOT(handleEvent(ctkEvent)), properties);
-    emit syncSignal(event);
-    eventAdmin->unsubscribeSlot(id);
+    //qlonglong id = eventAdmin->subscribeSlot(&handler, SLOT(handleEvent(ctkEvent)), properties);
+    //emit syncSignal(event);
+    //eventAdmin->unsubscribeSlot(id);
   }
   else
   {
