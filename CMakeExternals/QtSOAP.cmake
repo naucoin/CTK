@@ -30,8 +30,11 @@ IF(${add_project})
       SET(_make_cmd make)
     ENDIF()
 
-    SET(_qtsoap_patch_script "${CTK_BINARY_DIR}/Utilities/QtSOAP/AcceptLicense.cmake")
-    CONFIGURE_FILE("${CTK_SOURCE_DIR}/Utilities/QtSOAP/AcceptLicense.cmake.in" ${_qtsoap_patch_script} @ONLY)
+    SET(_qtsoap_accept_script "${CTK_BINARY_DIR}/Utilities/QtSOAP/AcceptLicense.cmake")
+    CONFIGURE_FILE("${CTK_SOURCE_DIR}/Utilities/QtSOAP/AcceptLicense.cmake.in" ${_qtsoap_accept_script} @ONLY)
+    
+    SET(_qtsoap_patch_script "${CTK_BINARY_DIR}/Utilities/QtSOAP/qtsoap-2.7_1-patch.cmake")
+    CONFIGURE_FILE("${CTK_SOURCE_DIR}/Utilities/QtSOAP/qtsoap-2.7_1-patch.cmake.in" ${_qtsoap_patch_script} @ONLY)
 
     SET(_qtsoap_build_script "${CTK_BINARY_DIR}/Utilities/QtSOAP/BuildScript.cmake")
     CONFIGURE_FILE("${CTK_SOURCE_DIR}/Utilities/QtSOAP/BuildScript.cmake.in" ${_qtsoap_build_script} @ONLY)
@@ -41,6 +44,7 @@ IF(${add_project})
 
     ExternalProject_Add(${proj}
       URL ${_qtsoap_url}
+      PATCH_COMMAND ${CMAKE_COMMAND} -P ${_qtsoap_accept_script}  
       PATCH_COMMAND ${CMAKE_COMMAND} -P ${_qtsoap_patch_script}
       CONFIGURE_COMMAND <SOURCE_DIR>/configure -library
       BUILD_IN_SOURCE 1
