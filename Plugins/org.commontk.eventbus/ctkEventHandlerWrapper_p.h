@@ -3,7 +3,7 @@
 
 #include <QStringList>
 
-#include <service/event/ctkEventBus.h>
+#include <service/event/ctkEventAdmin.h>
 #include <service/event/ctkEventConstants.h>
 #include <ctkLDAPSearchFilter.h>
 
