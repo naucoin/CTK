@@ -4,25 +4,26 @@ SET(PLUGIN_export_directive "org_commontk_dah_core_EXPORT")
 
 SET(PLUGIN_SRCS
   ctkDicomAppHostingCorePlugin.cpp
+  ctkDicomAppHostingCorePlugin_p.h
   ctkDicomAppHostingTypes.h
-  ctkDicomAppHostingTypesHelper.h
+  ctkDicomAppHostingTypesHelper.cpp
   ctkDicomAppInterface.h
+  ctkDicomExchangeInterface.h
   ctkDicomExchangeService.cpp
   ctkDicomHostInterface.h
-  ctkDicomServicePrivate.cpp
   ctkExchangeSoapMessageProcessor.cpp
+  ctkSimpleSoapClient.cpp
   ctkSimpleSoapServer.cpp
   ctkSoapConnectionRunnable.cpp
+  ctkSoapConnectionRunnable_p.h
+  ctkSoapMessageProcessor.cpp
   ctkSoapMessageProcessorList.cpp
 )
 
 # Files which should be processed by Qts moc
 SET(PLUGIN_MOC_SRCS
   ctkDicomAppHostingCorePlugin_p.h
-  ctkDicomAppInterface.h
-  ctkDicomExchangeInterface.h
-  ctkDicomHostInterface.h
-  ctkDicomServicePrivate.h
+  ctkSimpleSoapClient.h
   ctkSimpleSoapServer.h
   ctkSoapConnectionRunnable_p.h
 )

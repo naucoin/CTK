@@ -33,14 +33,14 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * Location identifier of the CTK <i>system plugin</i>, which is defined
    * to be &quot;System Plugin&quot;.
    */
-  static const QString	SYSTEM_PLUGIN_LOCATION; // = "System Plugin"
+  static const QString SYSTEM_PLUGIN_LOCATION; // = "System Plugin"
 
   /**
    * Alias for the symbolic name of the CTK <i>system plugin</i>. It is
    * defined to be &quot;system.plugin&quot;.
    *
    */
-  static const QString	SYSTEM_PLUGIN_SYMBOLICNAME; // = "system.plugin"
+  static const QString SYSTEM_PLUGIN_SYMBOLICNAME; // = "system.plugin"
 
 
   /**
@@ -134,14 +134,14 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    *
    * <p>
    * The attribute value may be retrieved from the <code>QHash</code>
-   * object returned by the <code>Plugin::getHeaders</code> method.
+   * object returned by the <code>ctkPlugin::getHeaders</code> method.
    *
    * @see #PLUGIN_LOCALIZATION_DEFAULT_BASENAME
    */
   static const QString PLUGIN_LOCALIZATION; // = "Plugin-Localization"
 
   /**
-   * Default value for the <code>ctkPlugin-Localization</code> manifest header.
+   * Default value for the <code>Plugin-Localization</code> manifest header.
    *
    * @see #PLUGIN_LOCALIZATION
    */
@@ -190,7 +190,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * The attribute value may be retrieved from the <code>QHash</code>
    * object returned by the <code>ctkPlugin::getHeaders()</code> method.
    */
-  static const QString	PLUGIN_VERSION; // = "Plugin-Version"
+  static const QString PLUGIN_VERSION; // = "Plugin-Version"
 
   /**
    * Manifest header identifying the plugin's activation policy.
@@ -200,7 +200,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    *
    * @see #ACTIVATION_EAGER
    */
-  static const QString	PLUGIN_ACTIVATIONPOLICY; // = "Plugin-ActivationPolicy"
+  static const QString PLUGIN_ACTIVATIONPOLICY; // = "Plugin-ActivationPolicy"
 
   /**
    * Plugin activation policy declaring the plugin must be activated when the
@@ -226,7 +226,7 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * @see ctkPlugin#start(int)
    * @see ctkPlugin#START_ACTIVATION_POLICY
    */
-  static const QString	ACTIVATION_EAGER; // = "eager"
+  static const QString ACTIVATION_EAGER; // = "eager"
 
   /**
    * Manifest header directive identifying the resolution type in the
@@ -356,6 +356,24 @@ struct CTK_PLUGINFW_EXPORT ctkPluginConstants {
    * deemed to have a ranking value of zero.
    */
   static const QString SERVICE_RANKING; // = "service.ranking"
+
+  /**
+   * Service property identifying a service's vendor.
+   *
+   * <p>
+   * This property may be supplied in the properties <code>ctkDictionary</code> object
+   * passed to the <code>ctkPluginContext::registerService()</code> method.
+   */
+  static const QString SERVICE_VENDOR; // = "service.vendor"
+
+  /**
+   * Service property identifying a service's description.
+   *
+   * <p>
+   * This property may be supplied in the properties <code>ctkDictionary</code> object
+   * passed to the <code>ctkPluginContext::registerService()</code> method.
+   */
+  static const QString SERVICE_DESCRIPTION; // = "service.description"
 
 };
 

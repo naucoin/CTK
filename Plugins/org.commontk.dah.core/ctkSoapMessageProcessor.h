@@ -31,32 +31,19 @@ class org_commontk_dah_core_EXPORT ctkSoapMessageProcessor
 
 public:
 
-  virtual ~ctkSoapMessageProcessor() {}
+  virtual ~ctkSoapMessageProcessor();
 
-	/**
-	* Process a Soap Message and set the input reply.
-	* @input message The message to process.
-	* @input reply The reply to the input message.
-	* @return True if the message could be processed.
-	*/
-	virtual bool process( 
-		const QtSoapMessage& message,
-    QtSoapMessage* reply) const
-  {
-    Q_UNUSED(message)
-    Q_UNUSED(reply)
-    // to implement
-    return false;
-  }
-		
-	bool operator==( const ctkSoapMessageProcessor& rhs )
-	{
-		if( this == &rhs )
-		{
-			return true;
-		}
-		return false;
-	}
+  /**
+   * Process a Soap Message and set the input reply.
+   *
+   * @param message The message to process.
+   * @param reply The reply to the input message.
+   * @return True if the message could be processed.
+   */
+  virtual bool process(const QtSoapMessage& message,
+                       QtSoapMessage* reply) const;
+
+  bool operator==(const ctkSoapMessageProcessor& rhs);
 
 };
 

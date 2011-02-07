@@ -19,35 +19,22 @@
 
 =============================================================================*/
 
-#ifndef CTKDICOMSERVICEPRIVATE_H
-#define CTKDICOMSERVICEPRIVATE_H
 
-#include <ctkDicomAppHostingTypes.h>
+#include "ctkTestPluginMTAttrPwdActivator_p.h"
+#include <QtPlugin>
 
-#include <QEventLoop>
-#include <QtSoapHttpTransport>
-#include <org_commontk_dah_core_Export.h>
-#include <ctkDicomExchangeInterface.h>
-
-class org_commontk_dah_core_EXPORT ctkDicomServicePrivate : public QObject
+void ctkTestPluginMTAttrPwdActivator::start(ctkPluginContext* context)
 {
-  Q_OBJECT
+  Q_UNUSED(context)
+  Q_UNUSED(QT_TR_NOOP("Object"));
+  Q_UNUSED(QT_TR_NOOP("My object class definition"));
+}
 
-public:
-  ctkDicomServicePrivate(int port, QString path);
+void ctkTestPluginMTAttrPwdActivator::stop(ctkPluginContext* context)
+{
+  Q_UNUSED(context)
+}
 
-  const QtSoapType & askHost(const QString& methodName, const QList<QtSoapType*>& soapTypes);
-  const QtSoapType & askHost(const QString& methodName, QtSoapType* soapType);
-    
-  QEventLoop blockingLoop;
-  QtSoapHttpTransport http;
+Q_EXPORT_PLUGIN2(pluginAttrPwd_test, ctkTestPluginMTAttrPwdActivator)
 
-  int port;
-  QString path;
 
-private slots:
-
-  void responseReady();
-};
-
-#endif // CTKDICOMSERVICEPRIVATE_H
