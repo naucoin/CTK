@@ -333,6 +333,7 @@ SET(CTK_APPLICATIONS
   ctkDICOMRetrieve:OFF
   ctkExampleHost:OFF
   ctkExampleHostedApp:OFF
+  ctkEventBusDemo:OFF
   ctkPluginBrowser:OFF
   ctkPluginGenerator:OFF
   ctkSimplePythonShell:OFF
