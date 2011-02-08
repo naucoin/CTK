@@ -55,7 +55,7 @@ SET(PLUGIN_resources
 #  servicedescriptor.xml
 #)
 
-ctkMacroGetTargetLibraries(PLUGIN_target_libraries)
+ctkFunctionGetTargetLibraries(PLUGIN_target_libraries)
 
 ctkMacroBuildPlugin(
   INCLUDE_DIRECTORIES ${PLUGIN_include_directories}
