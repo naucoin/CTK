@@ -3,7 +3,7 @@
 
 #include "ctkEventAdminBus.h"
 
-#include "mafEventBus/mafEventBusManager.h"
+#include "mafEventBusManager.h"
 
 #include <QList>
 #include <QHash>
