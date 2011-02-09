@@ -83,7 +83,7 @@ struct ctkEventAdmin
    *        Qt::DirectConnection for synchronous delivery.
    */
   virtual void publishSignal(const QObject* publisher, const char* signal,
-                             const QString& signal_topic, Qt::ConnectionType type = Qt::QueuedConnection) = 0;
+                             const QString& signal_topic, Qt::ConnectionType type = Qt::QueuedConnection) {};
 
 
   /**
@@ -120,9 +120,7 @@ struct ctkEventAdmin
    *
    * @see unsubscribeSlot(qlonglong)
    */
-  //virtual qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties) = 0;
-
-  virtual QString subscribeSlot(const QObject* subscriber, const char* member, const QString& topic,const ctkDictionary& properties) = 0;
+  virtual qlonglong subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties) = 0;
 
   /**
    * Unsubscribe a previously subscribed slot. Use this method to allow the EventAdmin
@@ -132,8 +130,7 @@ struct ctkEventAdmin
    *
    * @see subscribeSlot()
    */
-  virtual void unsubscribeSlot(const QString& topic) = 0;
-
+  virtual void unsubscribeSlot(qlonglong subscriptionId) = 0;
   /**
    * Updates the properties of a previously registered slot. This can be used
    * to change the topics the slot is interested in or to change the filter expression.
@@ -144,7 +141,7 @@ struct ctkEventAdmin
    * @return <code>true</code> if a slot was registered under this subscriptionId and its
    *         properties where changed, <code>false</code> otherwise.
    */
-  virtual bool updateProperties(const QString& topic, const ctkDictionary& properties) = 0;
+  virtual bool updateProperties(qlonglong subscriptionId, const ctkDictionary& properties) = 0;
 
 };
 
