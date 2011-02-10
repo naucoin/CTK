@@ -3,7 +3,7 @@
 #include <QSetIterator>
 
 #include "ctkEventHandlerWrapper_p.h"
-
+#include "ctkBusEvent.h"
 
 #define ctkEventArgument(type,data) QArgument<type >(#type, data)
 
@@ -34,7 +34,7 @@ void ctkEventBusImpl::sendEvent(const ::ctkEvent& event)
 void ctkEventBusImpl::publishSignal(const QObject* publisher, const char* signal, const QString& topic,
                                     Qt::ConnectionType type)
 {
-    ctkEvent *mesbEvent = new ctkEvent(topic, ctkEventBus::ctkEventTypeLocal, ctkEventBus::mafSignatureTypeSignal, const_cast<QObject *>(publisher), signal);
+    ctkBusEvent *mesbEvent = new ctkBusEvent(topic, ctkEventBus::ctkEventTypeLocal, ctkEventBus::mafSignatureTypeSignal, const_cast<QObject *>(publisher), signal);
     m_EventBusManager->addEventProperty(*mesbEvent);
 }
 
@@ -46,7 +46,7 @@ void ctkEventBusImpl::publishSignal(const QObject* publisher, const char* signal
 qlonglong ctkEventBusImpl::subscribeSlot(const QObject* subscriber, const char* member, const ctkDictionary& properties)
 {
     QString topic = properties.value("EventTopic").toString();
-    ctkEvent *mesbEvent = new ctkEvent(topic, ctkEventBus::ctkEventTypeLocal, ctkEventBus::mafSignatureTypeCallback, const_cast<QObject *>(subscriber), member);
+    ctkBusEvent *mesbEvent = new ctkBusEvent(topic, ctkEventBus::ctkEventTypeLocal, ctkEventBus::mafSignatureTypeCallback, const_cast<QObject *>(subscriber), member);
     m_EventBusManager->addEventProperty(*mesbEvent);
 
     return topic.toLongLong();
@@ -78,7 +78,7 @@ void ctkEventBusImpl::dispatchEvent(const ctkEvent& event, bool isAsync)
 
   QString topic = event.getTopic(); //may contains widlcards
 
-  ctkEvent *mebEvent = new ctkEvent(topic,ctkEventBus::ctkEventTypeLocal,ctkEventBus::mafSignatureTypeSignal, this, "no");
+  ctkBusEvent *mebEvent = new ctkBusEvent(topic,ctkEventBus::ctkEventTypeLocal,ctkEventBus::mafSignatureTypeSignal, this, "no");
   mebEvent->setEventTopic(topic);
   mebEvent->setEventType(ctkEventBus::ctkEventTypeLocal);
   //mebEvent->setEventFilter(NULL);
