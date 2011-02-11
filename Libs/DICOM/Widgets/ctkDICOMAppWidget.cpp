@@ -69,6 +69,7 @@ ctkDICOMAppWidget::ctkDICOMAppWidget(QWidget* _parent):Superclass(_parent),
 
   //Initialize Q/R widget
   d->QueryRetrieveWidget = new ctkDICOMQueryRetrieveWidget();
+  d->QueryRetrieveWidget->setWindowModality ( Qt::ApplicationModal );
   connect(d->directoryButton, SIGNAL(directoryChanged(const QString&)), this, SLOT(setDatabaseDirectory(const QString&)));
 
   //Initialize import widget
@@ -129,7 +130,7 @@ void ctkDICOMAppWidget::setDatabaseDirectory(const QString& directory)
 
   //pass DICOM database instance to Import widget
   // d->ImportDialog->setDICOMDatabase(d->DICOMDatabase);
-  d->directoryButton->setDirectory(directory);
+  d->QueryRetrieveWidget->setRetrieveDatabase(d->DICOMDatabase);
 }
 
 void ctkDICOMAppWidget::onAddToDatabase()
@@ -180,5 +181,6 @@ void ctkDICOMAppWidget::onImportDirectory(QString directory)
        targetDirectory = d->DICOMDatabase->databaseDirectory();
     }
     d->DICOMIndexer->addDirectory(*d->DICOMDatabase,directory,targetDirectory);
+    d->DICOMModel.reset();
   }
 }
