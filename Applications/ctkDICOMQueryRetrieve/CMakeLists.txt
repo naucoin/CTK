@@ -1,4 +1,4 @@
-PROJECT(ctkDICOMViewer)
+PROJECT(ctkDICOMQueryRetrieve)
 
 #
 # See CTK/CMake/ctkMacroBuildApp.cmake for details
@@ -6,7 +6,7 @@ PROJECT(ctkDICOMViewer)
   
 # Source files
 SET(KIT_SRCS
-  ctkDICOMViewerMain.cpp
+  ctkDICOMQueryRetrieveMain.cpp
   )
 
 # Headers that should run through moc

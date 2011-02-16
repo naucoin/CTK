@@ -168,6 +168,7 @@ INCLUDE(CMake/ctkFunctionGeneratePluginManifest.cmake)
 INCLUDE(CMake/ctkMacroGeneratePluginResourceFile.cmake)
 INCLUDE(CMake/ctkFunctionCheckCompilerFlags.cmake)
 INCLUDE(CMake/ctkFunctionGetIncludeDirs.cmake)
+INCLUDE(CMake/ctkFunctionGetLibraryDirs.cmake)
 INCLUDE(CMake/ctkFunctionGetGccVersion.cmake)
 
 #-----------------------------------------------------------------------------
@@ -275,6 +276,13 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(CTK_CXX_FLAGS "${cflags} -Woverloaded-virtual -Wold-style-cast -Wstrict-null-sentinel -Wsign-promo ${CTK_CXX_FLAGS}")
 ENDIF()
 
+IF(MSVC)
+  SET(msvc_suppressed_warnings
+    "/wd4290" # C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  )
+  SET(CTK_CXX_FLAGS "${CTK_CXX_FLAGS} ${msvc_suppressed_warnings}")
+ENDIF()
+
 #-----------------------------------------------------------------------------
 # QT
 #
@@ -333,12 +341,13 @@ SET(CTK_APPLICATIONS
   ctkDICOMDemoSCU:OFF
   ctkDICOMQuery:OFF
   ctkDICOMRetrieve:OFF
-  ctkDICOMViewer:OFF
+  ctkDICOMQueryRetrieve:OFF
   ctkExampleHost:OFF
   ctkExampleHostedApp:OFF
   ctkEventBusDemo:OFF
   ctkPluginBrowser:OFF
   ctkPluginGenerator:OFF
+  ctkDICOMObjectViewer:OFF
   ctkSimplePythonShell:OFF
   )
   
@@ -542,7 +551,7 @@ IF(CTK_SUPERBUILD)
 ENDIF()
 
 #-----------------------------------------------------------------------------
-# Expand variables containing include directories for external projects
+# Expand variables containing include and library directories for external projects
 # This relies on the variable EXTERNAL_TARGETS set in ctkMacroValidateBuildOptions
 FOREACH(_external_target ${EXTERNAL_TARGETS})
   IF(${_external_target}_FIND_PACKAGE_CMD)
@@ -567,6 +576,23 @@ FOREACH(_external_target ${EXTERNAL_TARGETS})
         #MESSAGE("[${_external_target}] New dirs: ${${_external_target}_INCLUDE_DIRS}")
       ENDFOREACH()
       #MESSAGE("[${_external_target}] Appended dirs: ${${_external_target}_INCLUDE_DIRS}")
+    ENDIF()
+  ENDIF()
+  IF(${_external_target}_LIBRARY_DIRS)
+    STRING(REPLACE "^" ";" _library_variable_list "${${_external_target}_LIBRARY_DIRS}")
+    IF(_library_variable_list)
+      #MESSAGE("[${_external_target}] Resolving library variables: ${${_external_target}_LIBRARY_DIRS}")
+      SET(${_external_target}_LIBRARY_DIRS "")
+      FOREACH(_library_variable ${_library_variable_list})
+        #MESSAGE("[${_external_target}] Appending ${${_library_variable}}")
+        IF(${_library_variable})
+          LIST(APPEND ${_external_target}_LIBRARY_DIRS ${${_library_variable}})
+        ELSE()
+          LIST(APPEND ${_external_target}_LIBRARY_DIRS ${_library_variable})
+        ENDIF()
+        #MESSAGE("[${_external_target}] New dirs: ${${_external_target}_LIBRARY_DIRS}")
+      ENDFOREACH()
+      #MESSAGE("[${_external_target}] Appended dirs: ${${_external_target}_LIBRARY_DIRS}")
     ENDIF()
   ENDIF()
 ENDFOREACH()

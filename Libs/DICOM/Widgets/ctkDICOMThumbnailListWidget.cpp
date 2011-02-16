@@ -5,6 +5,9 @@
 #include <QPushButton>
 #include <QPixmap>
 
+// ctk includes
+#include "ctkLogger.h"
+
 // ctkWidgets includes
 #include "ctkFlowLayout.h"
 
@@ -15,6 +18,8 @@
 
 // STD includes
 #include <iostream>
+
+static ctkLogger logger("org.commontk.DICOM.Widgets.ctkDICOMThumbnailListWidget");
 
 //----------------------------------------------------------------------------
 class ctkDICOMThumbnailListWidgetPrivate: public Ui_ctkDICOMThumbnailListWidget
@@ -45,19 +50,7 @@ ctkDICOMThumbnailListWidget::ctkDICOMThumbnailListWidget(QWidget* _parent):Super
   
   d->setupUi(this);
 
-  ctkFlowLayout* flowLayout = new ctkFlowLayout();
-  d->scrollAreaContentWidget->setLayout(flowLayout);
 
-  for(int i=0; i<326; i++){
-    ctkDICOMThumbnailWidget* widget = new ctkDICOMThumbnailWidget(d->scrollAreaContentWidget);
-
-    QString str("thumbnail");
-    widget->setText(str);
-    QPixmap pix(64, 64);
-    pix.fill(Qt::blue);
-    widget->setPixmap(pix);
-    flowLayout->addWidget(widget);
-  }
 }
 
 //----------------------------------------------------------------------------
@@ -66,7 +59,27 @@ ctkDICOMThumbnailListWidget::~ctkDICOMThumbnailListWidget()
   
 }
 
-void ctkDICOMThumbnailListWidget::setModelIndex(const QModelIndex &index){
+void ctkDICOMThumbnailListWidget::setThumbnailFiles(const QStringList& thumbnailList)
+{
   Q_D(ctkDICOMThumbnailListWidget);
 
+  if (d->scrollAreaContentWidget->layout())
+  {
+    delete d->scrollAreaContentWidget->layout();
+  }
+
+  ctkFlowLayout* flowLayout = new ctkFlowLayout();
+  d->scrollAreaContentWidget->setLayout(flowLayout);
+
+  int i = 0;
+  foreach (QString thumbnailFile, thumbnailList)
+  {
+    ctkDICOMThumbnailWidget* widget = new ctkDICOMThumbnailWidget(d->scrollAreaContentWidget);
+    QString widgetLabel = QString("Image %1").arg(i++);
+    widget->setText( widgetLabel );
+    QPixmap pix(thumbnailFile);
+    logger.debug("Setting pixmap to " + thumbnailFile);
+    widget->setPixmap(pix);
+    flowLayout->addWidget(widget);
+  }
 }

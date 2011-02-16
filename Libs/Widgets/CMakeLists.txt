@@ -85,6 +85,8 @@ SET(KIT_SRCS
   ctkSettingsDialog.h
   ctkSettingsPanel.cpp
   ctkSettingsPanel.h
+  ctkQImageView.cpp
+  ctkQImageView.h
   ctkSliderWidget.cpp
   ctkSliderWidget.h
   ctkTestApplication.cpp
@@ -176,6 +178,7 @@ SET(KIT_MOC_SRCS
   ctkSettings.h
   ctkSettingsDialog.h
   ctkSettingsPanel.h
+  ctkQImageView.h
   ctkSliderWidget.h
   ctkTestApplication.h
   ctkToolTipTrapper.h

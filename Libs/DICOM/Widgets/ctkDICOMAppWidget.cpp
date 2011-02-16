@@ -1,6 +1,8 @@
 // std includes
 #include <iostream>
 
+#include <dcmimage.h>
+
 // Qt includes
 #include <QDebug>
 #include <QTreeView>
@@ -15,6 +17,7 @@
 #include "ctkDICOMIndexer.h"
 
 // ctkDICOMWidgets includes
+#include "ctkDICOMImage.h"
 #include "ctkDICOMModel.h"
 #include "ctkDICOMAppWidget.h"
 #include "ctkDICOMQueryResultsTabWidget.h"
@@ -165,28 +168,64 @@ void ctkDICOMAppWidget::onDICOMModelSelected(const QModelIndex& index)
 {
   Q_D(ctkDICOMAppWidget);
 
-  //TODO: update thumbnails and previewer
-  d->thumbnailsWidget->setModelIndex(index);
+  if ( d->DICOMModel.data(index,ctkDICOMModel::TypeRole) == ctkDICOMModel::SeriesType )
+  {
+    qDebug() << "Clicked on series";
+    QStringList thumbnails;
+    QString thumbnailPath = d->DICOMDatabase->databaseDirectory() +
+                            "/thumbs/" + d->DICOMModel.data(index.parent() ,ctkDICOMModel::UIDRole).toString() + "/" +
+                            d->DICOMModel.data(index ,ctkDICOMModel::UIDRole).toString() + "/";
+
+    QModelIndex studyIndex = index.parent();
+    QModelIndex seriesIndex = index;
+    int imageCount = d->DICOMModel.rowCount(index);
+    logger.debug(QString("Thumbs: %1").arg(imageCount));
+    for (int i = 0 ; i < imageCount ; i++ )
+    {
+      QModelIndex imageIndex = index.child(i,0);
+      QString thumbnail = thumbnailPath + d->DICOMModel.data(imageIndex, ctkDICOMModel::UIDRole).toString() + ".png";
+      qDebug() << "Thumb: " << thumbnail;
+      if (QFile(thumbnail).exists())
+      {
+        thumbnails << thumbnail;
+      }
+      else
+      {
+      logger.error("No thumbnail file " + thumbnail);
+      }
+    }
+    d->thumbnailsWidget->setThumbnailFiles(thumbnails);
+
+    //  thumbnailPath.append("/thumbs/").append(d->DICOMModel.data( studyIndex,ctkDICOMModel::UIDRole).toString() );
+    //  thumbnailPath.append(d->DICOMModel.data( seriesIndex,ctkDICOMModel::UIDRole).toString() );
+  }
+
 
   // TODO: this could check the type of the model entries
   QString thumbnailPath = d->DICOMDatabase->databaseDirectory();
-  thumbnailPath.append("/thumbs/").append(d->DICOMModel.data(index.parent().parent() ,ctkDICOMModel::UIDRole).toString());
+  thumbnailPath.append("/dicom/").append(d->DICOMModel.data(index.parent().parent() ,ctkDICOMModel::UIDRole).toString());
   thumbnailPath.append("/").append(d->DICOMModel.data(index.parent() ,ctkDICOMModel::UIDRole).toString());
   thumbnailPath.append("/").append(d->DICOMModel.data(index ,ctkDICOMModel::UIDRole).toString());
-  thumbnailPath.append(".png");
+  //thumbnailPath.append(".png");
   if (QFile(thumbnailPath).exists())
   {
-    d->imagePreview->setPixmap(QPixmap(thumbnailPath));
+    DicomImage dcmImage( thumbnailPath.toStdString().c_str() );
+    ctkDICOMImage ctkImage( & dcmImage );
+    d->imagePreview->clearImages();
+    d->imagePreview->addImage( ctkImage );
   }
   else
   {
-    d->imagePreview->setText("No preview");
+    d->imagePreview->clearImages();
   }
+
+
 }
 
 void ctkDICOMAppWidget::onThumbnailSelected(const ctkDICOMThumbnailWidget& widget){
   //TODO: update previewer
 }
+
 void ctkDICOMAppWidget::onImportDirectory(QString directory)
 {
   Q_D(ctkDICOMAppWidget);

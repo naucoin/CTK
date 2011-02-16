@@ -23,12 +23,14 @@
 #include <QTreeView>
 #include <QSettings>
 #include <QDir>
-
-// CTK Core
-#include <ctkDICOMDatabase.h>
+#include <QResource>
 
 // CTK widget includes
-#include <ctkDICOMQueryRetrieveWidget.h>
+#include <ctkDICOMAppWidget.h>
+
+// ctkDICOMCore includes
+#include "ctkDICOMDatabase.h"
+#include "ctkDICOMModel.h"
 
 // Logger
 #include "ctkLogger.h"
@@ -44,6 +46,9 @@ int main(int argc, char** argv)
   app.setOrganizationName("commontk");
   app.setOrganizationDomain("commontk.org");
   app.setApplicationName("ctkDICOM");
+
+  // set up Qt resource files
+  QResource::registerResource("./Resources/ctkDICOM.qrc");
 
   QSettings settings;
   QString databaseDirectory;
@@ -75,17 +80,11 @@ int main(int argc, char** argv)
     }
   }
 
+  ctkDICOMAppWidget DICOMApp;
 
-  QString databaseFileName = databaseDirectory + QString("/ctkDICOM.sql");
+  DICOMApp.setDatabaseDirectory(databaseDirectory);
+  DICOMApp.show();
+  DICOMApp.raise();
 
-  QSharedPointer<ctkDICOMDatabase> dicomDatabase = QSharedPointer<ctkDICOMDatabase> (new ctkDICOMDatabase);
-  dicomDatabase->openDatabase(databaseFileName);
-
-  ctkDICOMQueryRetrieveWidget queryRetrieve;
-
-  queryRetrieve.setRetrieveDatabase(dicomDatabase);
-
-  queryRetrieve.show();
-  queryRetrieve.raise();
   return app.exec();
 }
