@@ -56,6 +56,7 @@ if(EXISTS "${CTKData_DIR}")
   list(APPEND TEST_SOURCES
     ctkVTKMagnifyViewTest2.cpp
     ctkVTKSliceViewTest2.cpp
+    ctkVTKSliceAndRenderViewWithSeedWidgetTest.cpp
     ctkVTKRenderViewTest2.cpp
     )
 endif()
@@ -217,6 +218,7 @@ if(EXISTS "${CTKData_DIR}")
 
   SIMPLE_TEST_WITH_DATA( ctkVTKRenderViewTest2 ${baseline_relative_location})
   SIMPLE_TEST_WITH_DATA( ctkVTKSliceViewTest2 ${baseline_relative_location})
+  SIMPLE_TEST_WITH_DATA( ctkVTKSliceAndRenderViewWithSeedWidgetTest ${baseline_relative_location})
 endif()
 
 #
