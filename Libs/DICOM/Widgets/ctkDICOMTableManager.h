@@ -104,6 +104,14 @@ public Q_SLOTS:
   void onPatientsSelectionChanged(const QStringList&);
   void onStudiesSelectionChanged(const QStringList&);
 
+  /// Triggered by a right click in the table.
+  /// Translates the local point to a global in the context
+  /// of the table manager and triggers the XRightClicked signal
+  /// \sa patientsRightClicked, studiesRightClicked, seriesRightClicked
+  void onPatientsCustomContextMenuRequested(const QPoint&);
+  void onStudiesCustomContextMenuRequested(const QPoint&);
+  void onSeriesCustomContextMenuRequested(const QPoint&);
+
 Q_SIGNALS:
   /// Signals for propagating selection changes of the different tables
   void patientsSelectionChanged(const QItemSelection&, const QItemSelection&);
@@ -114,7 +122,14 @@ Q_SIGNALS:
   void studiesSelectionChanged(const QStringList &uids);
   void seriesSelectionChanged(const QStringList &uids);
 
+  void patientsDoubleClicked(const QModelIndex&);
+  void studiesDoubleClicked(const QModelIndex&);
   void seriesDoubleClicked(const QModelIndex&);
+
+  void patientsRightClicked(const QPoint&);
+  void studiesRightClicked(const QPoint&);
+  void seriesRightClicked(const QPoint&);
+
 
 protected:
 

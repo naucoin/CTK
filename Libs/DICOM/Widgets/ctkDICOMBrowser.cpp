@@ -29,6 +29,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QListView>
+#include <QMenu>
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QSettings>
@@ -244,6 +245,17 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
   connect(d->dicomTableManager, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
+  // for testing in Slicer
+  connect(d->dicomTableManager, SIGNAL(seriesDoubleClicked(const QModelIndex&)),
+          this, SLOT(onSeriesDoubleClicked(const QModelIndex&)));
+
+  // set up context menus for working on selected patients, studies, series
+  connect(d->dicomTableManager, SIGNAL(patientsRightClicked(const QPoint&)),
+          this, SLOT(onPatientsRightClicked(const QPoint&)));
+  connect(d->dicomTableManager, SIGNAL(studiesRightClicked(const QPoint&)),
+          this, SLOT(onStudiesRightClicked(const QPoint&)));
+  connect(d->dicomTableManager, SIGNAL(seriesRightClicked(const QPoint&)),
+          this, SLOT(onSeriesRightClicked(const QPoint&)));
 
   connect(d->DirectoryButton, SIGNAL(directoryChanged(QString)), this, SLOT(setDatabaseDirectory(QString)));
 
@@ -656,4 +668,118 @@ void ctkDICOMBrowser::onModelSelected(const QItemSelection &item1, const QItemSe
   Q_UNUSED(item2);
   Q_D(ctkDICOMBrowser);
   d->ActionRemove->setEnabled(true);
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onSeriesDoubleClicked(const QModelIndex& index)
+{
+  qDebug() << "\n\n********\nonSeriesDoubleClicked, index = " << index;
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
+{
+  Q_D(ctkDICOMBrowser);
+
+  // get the list of patients that are selected
+  QStringList selectedPatientsUIDs = d->dicomTableManager->currentPatientsSelection();
+  int numPatients = selectedPatientsUIDs.size();
+  if (numPatients == 0)
+    {
+    qDebug() << "No patients selected!";
+    return;
+    }
+
+  QMenu *patientsMenu = new QMenu(d->dicomTableManager);
+  QAction *deleteAction = new QAction("Delete", patientsMenu);
+  QAction *cancelAction = new QAction("Cancel", patientsMenu);
+
+  patientsMenu->addAction(deleteAction);
+  patientsMenu->addSeparator();
+  patientsMenu->addAction(cancelAction);
+
+  // the table manager took care of mapping it to a global position so that the
+  // menu will pop up at the correct place over this table.
+  QAction *selectedAction = patientsMenu->exec(point);
+
+  if (selectedAction == deleteAction)
+    {
+    qDebug() << "Deleting " << numPatients << " patients";
+    foreach (const QString& uid, selectedPatientsUIDs)
+      {
+      d->DICOMDatabase->removePatient(uid);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onStudiesRightClicked(const QPoint &point)
+{
+  Q_D(ctkDICOMBrowser);
+
+  // get the list of studies that are selected
+  QStringList selectedStudiesUIDs = d->dicomTableManager->currentStudiesSelection();
+  int numStudies = selectedStudiesUIDs.size();
+  if (numStudies == 0)
+    {
+    qDebug() << "No studies selected!";
+    return;
+    }
+
+  QMenu *studiesMenu = new QMenu(d->dicomTableManager);
+  QAction *deleteAction = new QAction("Delete", studiesMenu);
+  QAction *cancelAction = new QAction("Cancel", studiesMenu);
+
+  studiesMenu->addAction(deleteAction);
+  studiesMenu->addSeparator();
+  studiesMenu->addAction(cancelAction);
+
+  // the table manager took care of mapping it to a global position so that the
+  // menu will pop up at the correct place over this table.
+  QAction *selectedAction = studiesMenu->exec(point);
+
+  if (selectedAction == deleteAction)
+    {
+    qDebug() << "Deleting " << numStudies << " studies";
+    foreach (const QString& uid, selectedStudiesUIDs)
+      {
+      d->DICOMDatabase->removeStudy(uid);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
+{
+  Q_D(ctkDICOMBrowser);
+
+  // get the list of series that are selected
+  QStringList selectedSeriesUIDs = d->dicomTableManager->currentSeriesSelection();
+  int numSeries = selectedSeriesUIDs.size();
+  if (numSeries == 0)
+    {
+    qDebug() << "No series selected!";
+    return;
+    }
+
+  QMenu *seriesMenu = new QMenu(d->dicomTableManager);
+  QAction *deleteAction = new QAction("Delete", seriesMenu);
+  QAction *cancelAction = new QAction("Cancel", seriesMenu);
+
+  seriesMenu->addAction(deleteAction);
+  seriesMenu->addSeparator();
+  seriesMenu->addAction(cancelAction);
+
+  // the table manager took care of mapping it to a global position so that the
+  // menu will pop up at the correct place over this table.
+  QAction *selectedAction = seriesMenu->exec(point);
+
+  if (selectedAction == deleteAction)
+    {
+    qDebug() << "Deleting " << numSeries << " series";
+    foreach (const QString& uid, selectedSeriesUIDs)
+      {
+      d->DICOMDatabase->removeSeries(uid);
+      }
+    }
 }

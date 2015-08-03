@@ -115,6 +115,18 @@ protected:
 protected Q_SLOTS:
     void onModelSelected(const QItemSelection&, const QItemSelection&);
 
+    /// Called when a right mouse click is made in the patients table
+    void onPatientsRightClicked(const QPoint &point);
+
+    /// Called when a right mouse click is made in the studies table
+    void onStudiesRightClicked(const QPoint &point);
+
+    /// Called when a right mouse click is made in the series table
+    void onSeriesRightClicked(const QPoint &point);
+
+    /// Called due to a double click in the series table
+    void onSeriesDoubleClicked(const QModelIndex& index);
+
     /// To be called when dialog finishes
     void onQueryRetrieveFinished();
 

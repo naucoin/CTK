@@ -98,8 +98,34 @@ void ctkDICOMTableManagerPrivate::init()
   QObject::connect(this->seriesTable, SIGNAL(selectionChanged(const QStringList&)),
                    q, SIGNAL(seriesSelectionChanged(const QStringList&)));
 
+  // For propagating double clicks
+  QObject::connect(this->patientsTable, SIGNAL(doubleClicked(const QModelIndex&)),
+                   q, SIGNAL(patientsDoubleClicked(const QModelIndex&)));
+  QObject::connect(this->studiesTable, SIGNAL(doubleClicked(const QModelIndex&)),
+                   q, SIGNAL(studiesDoubleClicked(const QModelIndex&)));
   QObject::connect(this->seriesTable, SIGNAL(doubleClicked(const QModelIndex&)),
                    q, SIGNAL(seriesDoubleClicked(const QModelIndex&)));
+
+  // For propagating right clicks
+  if (this->patientsTable->contextMenuPolicy() != Qt::CustomContextMenu)
+    {
+    this->patientsTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    }
+  QObject::connect(this->patientsTable, SIGNAL(customContextMenuRequested(const QPoint&)),
+                   q, SLOT(onPatientsCustomContextMenuRequested(const QPoint&)));
+  if (this->studiesTable->contextMenuPolicy() != Qt::CustomContextMenu)
+    {
+    this->studiesTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    }
+  QObject::connect(this->studiesTable, SIGNAL(customContextMenuRequested(const QPoint&)),
+                   q, SLOT(onStudiesCustomContextMenuRequested(const QPoint&)));
+
+  if (this->seriesTable->contextMenuPolicy() != Qt::CustomContextMenu)
+    {
+    this->seriesTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    }
+  QObject::connect(this->seriesTable, SIGNAL(customContextMenuRequested(const QPoint&)),
+                   q, SLOT(onSeriesCustomContextMenuRequested(const QPoint&)));
 }
 
 //------------------------------------------------------------------------------
@@ -315,4 +341,40 @@ ctkDICOMTableManager::DisplayDensity ctkDICOMTableManager::displayDensity()
   {
     return ctkDICOMTableManager::Compact;
   }
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableManager::onPatientsCustomContextMenuRequested(const QPoint &point)
+{
+  Q_D(ctkDICOMTableManager);
+
+  // translate the patients table local point to a global
+  QPoint globalPosition = d->patientsTable->mapToGlobal(point);
+
+  // signal with the global position
+  this->patientsRightClicked(globalPosition);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableManager::onStudiesCustomContextMenuRequested(const QPoint &point)
+{
+  Q_D(ctkDICOMTableManager);
+
+  // translate the studies table local point to a global
+  QPoint globalPosition = d->studiesTable->mapToGlobal(point);
+
+  // signal with the global position
+  this->studiesRightClicked(globalPosition);
+}
+
+//------------------------------------------------------------------------------
+void ctkDICOMTableManager::onSeriesCustomContextMenuRequested(const QPoint &point)
+{
+  Q_D(ctkDICOMTableManager);
+
+  // translate the series table local point to a global
+  QPoint globalPosition = d->seriesTable->mapToGlobal(point);
+
+  // signal with the global position
+  this->seriesRightClicked(globalPosition);
 }
