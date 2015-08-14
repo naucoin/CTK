@@ -34,6 +34,7 @@
 #include <QProgressDialog>
 #include <QSettings>
 #include <QStringListModel>
+#include <QWidgetAction>
 
 // ctkWidgets includes
 #include "ctkDirectoryButton.h"
@@ -245,9 +246,6 @@ ctkDICOMBrowser::ctkDICOMBrowser(QWidget* _parent):Superclass(_parent),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
   connect(d->dicomTableManager, SIGNAL(seriesSelectionChanged(const QItemSelection&, const QItemSelection&)),
           this, SLOT(onModelSelected(const QItemSelection&,const QItemSelection&)));
-  // for testing in Slicer
-  connect(d->dicomTableManager, SIGNAL(seriesDoubleClicked(const QModelIndex&)),
-          this, SLOT(onSeriesDoubleClicked(const QModelIndex&)));
 
   // set up context menus for working on selected patients, studies, series
   connect(d->dicomTableManager, SIGNAL(patientsRightClicked(const QPoint&)),
@@ -671,9 +669,29 @@ void ctkDICOMBrowser::onModelSelected(const QItemSelection &item1, const QItemSe
 }
 
 //----------------------------------------------------------------------------
-void ctkDICOMBrowser::onSeriesDoubleClicked(const QModelIndex& index)
+void ctkDICOMBrowser::addSelectionLabelsToContextMenu(QStringList uids, QMenu *menu)
 {
-  qDebug() << "\n\n********\nonSeriesDoubleClicked, index = " << index;
+  if (!menu || uids.isEmpty())
+    {
+    return;
+    }
+
+  // add non clickable labels to the menu
+  QLabel *headerLabel = new QLabel(tr("Selected UIDs:"), menu);
+  QWidgetAction *headerAction = new QWidgetAction(menu);
+  headerAction->setDefaultWidget(headerLabel);
+  menu->addAction(headerAction);
+
+  int numUIDs = uids.size();
+  for (int i = 0; i < numUIDs; ++i)
+    {
+    QLabel *uidLabel = new QLabel(uids.at(i));
+    QWidgetAction *uidAction = new QWidgetAction(menu);
+    uidAction->setDefaultWidget(uidLabel);
+    menu->addAction(uidAction);
+    }
+
+  menu->addSeparator();
 }
 
 //----------------------------------------------------------------------------
@@ -691,14 +709,17 @@ void ctkDICOMBrowser::onPatientsRightClicked(const QPoint &point)
     }
 
   QMenu *patientsMenu = new QMenu(d->dicomTableManager);
-  QAction *deleteAction = new QAction("Delete", patientsMenu);
+
+  this->addSelectionLabelsToContextMenu(selectedPatientsUIDs, patientsMenu);
+
+  QAction *deleteAction = new QAction("Delete selected patients", patientsMenu);
   QAction *cancelAction = new QAction("Cancel", patientsMenu);
 
   patientsMenu->addAction(deleteAction);
   patientsMenu->addSeparator();
   patientsMenu->addAction(cancelAction);
 
-  // the table manager took care of mapping it to a global position so that the
+  // the table took care of mapping it to a global position so that the
   // menu will pop up at the correct place over this table.
   QAction *selectedAction = patientsMenu->exec(point);
 
@@ -727,20 +748,22 @@ void ctkDICOMBrowser::onStudiesRightClicked(const QPoint &point)
     }
 
   QMenu *studiesMenu = new QMenu(d->dicomTableManager);
-  QAction *deleteAction = new QAction("Delete", studiesMenu);
+
+  this->addSelectionLabelsToContextMenu(selectedStudiesUIDs, studiesMenu);
+
+  QAction *deleteAction = new QAction("Delete selected studies", studiesMenu);
   QAction *cancelAction = new QAction("Cancel", studiesMenu);
 
   studiesMenu->addAction(deleteAction);
   studiesMenu->addSeparator();
   studiesMenu->addAction(cancelAction);
 
-  // the table manager took care of mapping it to a global position so that the
+  // the table took care of mapping it to a global position so that the
   // menu will pop up at the correct place over this table.
   QAction *selectedAction = studiesMenu->exec(point);
 
   if (selectedAction == deleteAction)
     {
-    qDebug() << "Deleting " << numStudies << " studies";
     foreach (const QString& uid, selectedStudiesUIDs)
       {
       d->DICOMDatabase->removeStudy(uid);
@@ -763,20 +786,22 @@ void ctkDICOMBrowser::onSeriesRightClicked(const QPoint &point)
     }
 
   QMenu *seriesMenu = new QMenu(d->dicomTableManager);
-  QAction *deleteAction = new QAction("Delete", seriesMenu);
+
+  this->addSelectionLabelsToContextMenu(selectedSeriesUIDs, seriesMenu);
+
+  QAction *deleteAction = new QAction("Delete selected series", seriesMenu);
   QAction *cancelAction = new QAction("Cancel", seriesMenu);
 
   seriesMenu->addAction(deleteAction);
   seriesMenu->addSeparator();
   seriesMenu->addAction(cancelAction);
 
-  // the table manager took care of mapping it to a global position so that the
+  // the table took care of mapping it to a global position so that the
   // menu will pop up at the correct place over this table.
   QAction *selectedAction = seriesMenu->exec(point);
 
   if (selectedAction == deleteAction)
     {
-    qDebug() << "Deleting " << numSeries << " series";
     foreach (const QString& uid, selectedSeriesUIDs)
       {
       d->DICOMDatabase->removeSeries(uid);

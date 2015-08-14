@@ -29,6 +29,7 @@
 
 class ctkDICOMBrowserPrivate;
 class ctkThumbnailLabel;
+class QMenu;
 class QModelIndex;
 class ctkDICOMDatabase;
 class ctkDICOMTableManager;
@@ -112,6 +113,10 @@ Q_SIGNALS:
 
 protected:
     QScopedPointer<ctkDICOMBrowserPrivate> d_ptr;
+
+    /// Add labels to the context menu giving information about the selected UIDs
+    void addSelectionLabelsToContextMenu(QStringList uids, QMenu *menu);
+
 protected Q_SLOTS:
     void onModelSelected(const QItemSelection&, const QItemSelection&);
 
@@ -123,9 +128,6 @@ protected Q_SLOTS:
 
     /// Called when a right mouse click is made in the series table
     void onSeriesRightClicked(const QPoint &point);
-
-    /// Called due to a double click in the series table
-    void onSeriesDoubleClicked(const QModelIndex& index);
 
     /// To be called when dialog finishes
     void onQueryRetrieveFinished();
